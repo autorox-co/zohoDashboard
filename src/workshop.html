@@ -1,0 +1,200 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vue Workshop Example</title>
+  <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14/dist/vue.js"></script>
+  <link rel="stylesheet" href="styling.css">
+  <script src="https://cdn.jsdelivr.net/npm/vue-router@3.5.2/dist/vue-router.js"></script>
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+
+<body>
+
+  <div id="app" class="container mt-2">
+
+    <div class="row mb-2">
+      <div class="col-12 text-right">
+        
+        <a href="steps.html" class="btn btn-link">Important Steps To Follow</a>
+      </div>
+    </div>
+    
+
+    
+    <div class="row mb-4">
+      <div class="col-md-6 d-flex align-items-center">
+        <div class="mr-3">
+          <select v-model="selectedWorkshop" @change="updateCustomerDetails" class="form-control">
+            <option value="" disabled>Select a workshop</option>
+            <option v-for="(workshop, index) in workshops" :key="index" :value="workshop.name">
+              {{ workshop.name }}
+            </option>
+          </select>
+        </div>
+       
+      </div>
+    
+      <div class="col-md-6 d-flex align-items-center ">
+        <input
+          type="text"
+          v-model="searchCustomers"
+          placeholder="Search Customers..."
+          class="form-control mr-2"
+          style="width: 100%; max-width: 300px;margin-left: 200px;"
+        />
+        <select v-model="filterType" class="form-control" style="max-width: 150px;">
+          <option value="all">All</option>
+          <option value="today">Today</option>
+          <option value="yesterday">Yesterday</option>
+          <option value="this-week">This Week</option>
+          <option value="this-month">This Month</option>
+        </select>
+      </div>
+    </div>
+    
+
+   
+    <div v-if="selectedWorkshop && customerDetails.length > 0">
+      <h3 class="hello mb-3">Failed Invoice Details for {{ selectedWorkshop }}:</h3>
+      <table class="table table-bordered table-striped ">
+        <thead>
+          <tr>
+            <th><b>Customer Name</b></th>
+            <th><b>Customer Type</b></th>
+            <th><b>Invoice No</b></th>
+            <th><b>Invoice Date</b></th>
+            <th><b>Is Updated Invoice</b></th>
+            <th><b>Status</b></th>
+            <th><b>Receipt View</b></th>
+            <th><b>Resync</b></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="(customer, index) in paginatedCustomers" :key="index">
+            <td>{{ customer.name }}</td>
+            <td>{{ customer.type }}</td>
+            <td>{{ customer.invoiceno }}</td>
+            <td>{{ customer.date }}</td>
+            <td>{{ customer.update }}</td>
+            <td>{{ customer.status }}</td>
+            <td><button class="btn btn-info" @click="viewCustomerHistory(customer)">View</button></td>
+            <td><button class="btn btn-success" @click="syncCustomer()">Sync</button></td>
+          </tr>
+        </tbody>
+      </table>
+
+      
+      <div class="pagination-controls">
+        <button 
+          class="btn btn-secondary" 
+          @click="previousPage" 
+          :disabled="currentPage === 1">
+          Previous
+        </button>
+        
+        <button 
+          class="btn btn-secondary" 
+          @click="nextPage" 
+          :disabled="currentPage === totalPages">
+          Next
+        </button>
+      </div>
+
+    
+    <div v-if="showModal" 
+     class="modal fade show" 
+     id="receiptModal" 
+     tabindex="-1" 
+     role="dialog" 
+     aria-labelledby="receiptModalLabel" 
+     aria-hidden="true" 
+     style="display: block;" 
+     @click="handleBackdropClick">
+      <div class="modal-dialog" role="document" >
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="receiptModalLabel">Receipt History</h5>
+            <button type="button" class="close" @click="closeModal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+            <table class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>Receipt No</th>
+                  <th>Receipt Date</th>
+                  <th>Message</th>
+                  <th>Status</th>
+                  <th>Resync</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-if="selectedCustomerReceipts.length === 0">
+                  <td colspan="5" class="text-center">No receipt details found</td>
+                </tr>
+                <tr v-for="(receipt, index) in selectedCustomerReceipts" :key="index">
+                  <td>{{ receipt.receiptId }}</td>
+                  <td>{{ receipt.date }}</td>
+                  <td>{{ receipt.message }}</td>
+                  <td>{{ receipt.status }}</td>
+                  <td><button class="btn btn-success">Sync</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <p id="ww" v-if="!selectedWorkshop">Please Select the Workshop</p>
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+  <script src="app.js"></script>
+
+</body>
+
+</html> -->
+
+
+<!-- import axios from 'axios';
+
+const onSyncCustomer = async (customer) => {
+  try {
+    const token = import.meta.env.VITE_API_BEARER_TOKEN;
+    if (!token) {
+      console.error('No token found in .env file');
+      return;
+    }
+
+    const response = await axios.post(import.meta.env.VITE_APP_API_SYNC, customer, {
+      headers: {
+        'Authorization': `Bearer ${token}`,
+      },
+    });
+
+    console.log('Customer synced:', response.data);
+    // Handle the response and update the table state here if necessary
+
+  } catch (error) {
+    console.error('Error syncing customer:', error);
+  }
+};
+props: {
+  onSyncCustomer: {
+    type: Function,
+    required: true,
+  },
+},
+methods: {
+  onSyncCustomer(customer) {
+    this.$emit('sync-customer', customer);
+  }
+} -->
